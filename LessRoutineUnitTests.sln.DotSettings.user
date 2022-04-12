@@ -1,0 +1,8 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=0e8e168b_002D5565_002D4f1c_002Dafa2_002D41ae693f297f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;DummyShop.Tests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::E91C8FCC-4E1F-4551-9DBE-B17F4B7B2C0F::net6.0::DummyShop.Tests.Integration.Persistence.Repository.CustomerRepositoryTest.Get&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::E91C8FCC-4E1F-4551-9DBE-B17F4B7B2C0F::net6.0::DummyShop.Tests.Integration.Persistence.Repository.CustomerRepositoryTest.Get1.Returns_Customer&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::E91C8FCC-4E1F-4551-9DBE-B17F4B7B2C0F::net6.0::DummyShop.Tests.Integration.Persistence.Repository.CustomerRepositoryTest.Get1.Returns_Null_When_ThereIsNoSuchCustomer&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

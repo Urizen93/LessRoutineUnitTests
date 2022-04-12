@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
+      <PackageReference Include="BenchmarkDotNet.Annotations" Version="0.13.1" />
+      <PackageReference Include="LanguageExt.Core" Version="4.0.4" />
+      <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DummyShop.Tests\DummyShop.Tests.csproj" />
+      <ProjectReference Include="..\DummyShop\DummyShop.csproj" />
+    </ItemGroup>
+
+</Project>
