@@ -33,7 +33,9 @@ public sealed class GetSumOfOrdersInRelatedPeriod : ShopContextSqLiteInMemory
         await using (var context = CreateContext())
         {
             var sut = new OrderStatisticsRepository(context);
-            var actual = await sut.GetSumOfOrdersInRelatedPeriod(email);
+            var actual = await sut.GetSumOfOrdersInRelatedPeriod(
+                email,
+                DateTimeOffset.Now.AddYears(-2));
             Assert.Equal(expected, actual);
             WriteLine($"The sum was {actual}");
         }
@@ -54,16 +56,12 @@ public sealed class GetSumOfOrdersInRelatedPeriod : ShopContextSqLiteInMemory
                     DateTimeOffset.Now.AddYears(-1),
                     DateTimeOffset.Now));
 
-            #region Configure Entities
-
             fixture.Customize<OrderEntity>(composer => composer
                 .Do(entity => fixture.CreateMany<OrderLineEntity>().Iter(entity.OrderLines.Add)));
             
             fixture.Customize<CustomerEntity>(composer => composer
                 .With(entity => entity.Email, (Email email) => email.Value)
                 .Do(entity => fixture.CreateMany<OrderEntity>().Iter(entity.Orders.Add)));
-
-            #endregion
 
             return fixture;
         }

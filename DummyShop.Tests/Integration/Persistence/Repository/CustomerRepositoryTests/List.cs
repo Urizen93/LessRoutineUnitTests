@@ -2,7 +2,9 @@
 using DummyShop.Persistence.Repository;
 using DummyShop.Tests.Attributes;
 using DummyShop.Tests.EntityFrameworkOverrides;
+using DummyShop.Tests.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DummyShop.Tests.Integration.Persistence.Repository.CustomerRepositoryTests;
 
@@ -24,19 +26,17 @@ public sealed class List : ShopContextSqLiteInMemory
             var sut = new CustomerRepository(context);
             var actual = await sut.List();
 
-            Assert.Equivalent(expected, actual);
+            // Assert.Equivalent(expected, actual);
 
-            #region Hidden so far
-
-            // Assert.Collection(
-            //     expected.OrderBy(entity => entity.ID),
-            //     actual.AsSequenceSource().OfEqualityChecks(
-            //         likeness => likeness
-            //             .Without(entity => entity.Orders)));
-
-            #endregion
-
-            #region Hidden so far
+            Assert.Collection(
+                expected.OrderBy(entity => entity.ID),
+                actual.AsSequenceSource().OfEqualityChecks<CustomerEntity>(
+                    likeness => likeness
+                        .Without(entity => entity.Orders)
+                        .With(customer => customer.ID)
+                        .EqualsWhen((customer, entity) => entity.ID == customer.ID.Numeric)
+                        .With(customer => customer.Email)
+                        .EqualsWhen((entity, customer) => entity.Email == customer.Email)));
 
             // Assert.Collection(
             //     expected.OrderBy(entity => entity.ID),
@@ -47,11 +47,7 @@ public sealed class List : ShopContextSqLiteInMemory
             //             .EqualsWhen((entity, customer) => customer.Email == entity.Email))
             //         .Select(likeness => (Action<Customer>) likeness.ShouldEqual)
             //         .ToArray());
-
-            #endregion
-
-            #region Hidden so far
-
+            
             // Assert.True(
             //     expected
             //         .OrderBy(entity => entity.ID)
@@ -61,8 +57,6 @@ public sealed class List : ShopContextSqLiteInMemory
             //             .With(entity => entity.Email)
             //             .EqualsWhen((customer, entity) => customer.Email == entity.Email)
             //             .Without(entity => entity.Orders)));
-
-            #endregion
         }
     }
 }

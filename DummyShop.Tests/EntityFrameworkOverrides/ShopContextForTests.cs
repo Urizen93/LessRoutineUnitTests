@@ -1,4 +1,5 @@
 ﻿using DummyShop.Persistence;
+using DummyShop.Tests.EntityFrameworkOverrides.Converters;
 using Microsoft.EntityFrameworkCore;
 
 namespace DummyShop.Tests.EntityFrameworkOverrides;
@@ -11,18 +12,12 @@ public sealed class ShopContextForTests : ShopContext
     {
         base.OnModelCreating(modelBuilder);
 
-        #region Handle DateTimeOffsets
+        modelBuilder.Entity<OrderEntity>()
+            .Property(metadata => metadata.CreatedAt)
+            .HasConversion(new DateTimeOffsetToDateTimeConverter());
         
-        // modelBuilder.Entity<OrderEntity>()
-        //     .Property(metadata => metadata.CreatedAt)
-        //     .HasConversion(new DateTimeOffsetToDateTimeConverter());
-        
-        #endregion
-        
-        #region Handle Decimals
-        // modelBuilder.Entity<ProductEntity>()
-        //     .Property(product => product.Price)
-        //     .HasConversion<double>();
-        #endregion
+        modelBuilder.Entity<ProductEntity>()
+            .Property(product => product.Price)
+            .HasConversion<double>();
     }
 }

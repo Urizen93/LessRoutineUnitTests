@@ -6,6 +6,7 @@ using DummyShop.Persistence.Repository;
 using DummyShop.Services;
 using DummyShop.Tests.Attributes;
 using DummyShop.Tests.Customizations;
+using DummyShop.Tests.Extensions;
 using NSubstitute;
 
 namespace DummyShop.Tests.Unit.Services.UserStatisticsServiceTest;
@@ -30,25 +31,20 @@ public sealed class GetSumOfRelevantOrders
         private static IFixture FixtureFactory()
         {
             var fixture = new Fixture()
+                .WithNSubstitute()
                 .Customize(new ValidEmail());
 
             var email = fixture.Freeze<Email>();
             var (sumOfOrders, threshold) = fixture.Freeze<OrderStatistics>();
 
-            #region Dependencies
-
-            var statistics = fixture.Freeze<IHasUserOrderStatistics>();
+            var statistics = fixture.Create<IHasUserOrderStatistics>();
             statistics.GetSumOfOrdersInRelatedPeriod(email, threshold).Returns(sumOfOrders);
             
-            fixture.Inject(() => threshold);
-
-            #endregion
+            fixture.Register(() => new UserStatisticsService(statistics, () => threshold));
             
             return fixture;
         }
     }
-    
-    #region Explicit
     
     [Theory, AutoNSubData]
     public async Task Returns_OrdersStatistics_ExplicitDependencies(
@@ -66,11 +62,7 @@ public sealed class GetSumOfRelevantOrders
         
         Assert.Equal(expected, actual);
     }
-    
-    #endregion
 
-    #region Combined
-    
     [Theory, AutoNSubData]
     public async Task Returns_OrdersStatistics_TheWorstOfBothWorlds(
         [ValidEmail] Email user,
@@ -87,10 +79,6 @@ public sealed class GetSumOfRelevantOrders
         Assert.Equal(expected, actual);
     }
 
-    #endregion
-
-    #region Verify
-
     [Theory, AutoNSubData]
     public async Task Calls_GetSumOfOrdersInRelatedPeriod(
         [ValidEmail] Email user,
@@ -99,8 +87,8 @@ public sealed class GetSumOfRelevantOrders
     {
         _ = await sut.GetSumOfRelevantOrders(user);
 
-        await statistics.Received().GetSumOfOrdersInRelatedPeriod(user, Arg.Any<DateTimeOffset>());
+        await statistics.Received().GetSumOfOrdersInRelatedPeriod(
+            user,
+            Arg.Any<DateTimeOffset>());
     }
-
-    #endregion
 }

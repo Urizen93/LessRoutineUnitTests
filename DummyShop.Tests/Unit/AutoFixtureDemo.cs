@@ -2,6 +2,8 @@
 using AutoFixture.Xunit2;
 using DummyShop.Models;
 using DummyShop.Persistence;
+using DummyShop.Tests.Attributes;
+using DummyShop.Tests.Customizations;
 using DummyShop.Tests.Misc.Logger;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,7 +17,11 @@ public sealed class AutoFixtureDemo : LoggingTest
 {
     public AutoFixtureDemo(ITestOutputHelper output) : base(output) { }
     
-    [Theory, AutoData]
+    [Theory,
+     AutoData,
+     MemberData(nameof(SomeData)),
+     InlineAutoData("hello world!"),
+     MemberAutoData(nameof(SomeIncompleteData))]
     public void Basic(string text, IEnumerable<int> numbers, DateTimeOffset dateTime) { }
 
     [Fact]
@@ -27,27 +33,17 @@ public sealed class AutoFixtureDemo : LoggingTest
         WriteLine(fixture.CreateMany<byte>().ToArr().ToString());
     }
 
-    #region Constrained constructors
+    [Theory, AutoData]
+    public void ConstrainedEmail([ValidEmail] Email email) { }
 
     [Theory, AutoData]
-    public void ConstrainedEmail(Email email) { }
+    public void ConstrainedID([CustomizeWith(typeof(ValidCustomerID))] CustomerID id) { }
 
-    [Theory, AutoData]
-    public void ConstrainedID(CustomerID id) { }
-
-    #endregion
-    
-    #region Classes
-
-    [Theory, AutoData]
+    [Theory, CustomerEntity]
     public void Entity(CustomerEntity expected) { }
     
-    [Theory, AutoData]
-    public void Record(DumbCustomer expected) { }
-
-    #endregion
-
-    #region MemberData
+    [Theory, CustomerEntity]
+    public void Record(Customer expected) { }
 
     public static TheoryData<string, IEnumerable<int>, DateTimeOffset> SomeData = new()
     {
@@ -59,8 +55,6 @@ public sealed class AutoFixtureDemo : LoggingTest
     {
         { "edge case : partially applied", new[] { 5, 6 } }
     };
-
-    #endregion
 }
 
 #pragma warning restore xUnit1026

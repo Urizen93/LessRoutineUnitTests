@@ -14,7 +14,7 @@ const string connectionString =
 var options = new DbContextOptionsBuilder<ShopContext>()
     .UseSqlServer(connectionString)
     .Options;
-var context = new ShopContext(options);
+var context = new ShopContext(options, modelBuilder => modelBuilder.Seed());
 context.Database.EnsureCreated();
 var statistics = new OrderStatisticsRepository(context);
 
@@ -25,7 +25,7 @@ Console.WriteLine(await PrintStatistics(statistics, john));
 Console.WriteLine(await PrintStatistics(statistics, jane));
 
 static Task<string> PrintStatistics(OrderStatisticsRepository statistics, Email user) =>
-    from sumOfOrders in statistics.GetSumOfOrdersInRelatedPeriod(user)
+    from sumOfOrders in statistics.GetSumOfOrdersInRelatedPeriod(user, DateTimeOffset.Now.AddYears(-3))
     select Print(user, sumOfOrders);
 
 static string Print(Email user, decimal sumOfOrders) =>

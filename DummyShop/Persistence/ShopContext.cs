@@ -1,12 +1,19 @@
 using DummyShop.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using System;
 
 namespace DummyShop.Persistence;
 
 public class ShopContext : DbContext
 {
-    public ShopContext(DbContextOptions<ShopContext> options) : base(options) { }
-        
+    private readonly Action<ModelBuilder> _seed;
+
+    public ShopContext(
+        DbContextOptions<ShopContext> options,
+        Action<ModelBuilder>? seed = null) : base(options) =>
+        _seed = seed ?? (_ => { });
+
     public DbSet<CustomerEntity> Customers => Set<CustomerEntity>();
 
     public DbSet<ProductEntity> Products => Set<ProductEntity>();
@@ -15,19 +22,20 @@ public class ShopContext : DbContext
         
     public DbSet<OrderLineEntity> OrderLines => Set<OrderLineEntity>();
 
+    public static DateTimeOffset UtcNow() => throw new NotImplementedException();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
             .ApplyConfiguration(new CustomerEntityConfiguration())
             .ApplyConfiguration(new ProductEntityConfiguration())
             .ApplyConfiguration(new OrderEntityConfiguration())
-            .ApplyConfiguration(new OrderLineEntityConfiguration())
-            .Seed();
+            .ApplyConfiguration(new OrderLineEntityConfiguration());
 
-        #region Hidden so far
-        // modelBuilder.HasDbFunction(() => UtcNow())
-        //     .HasTranslation(_ => new SqlFunctionExpression(
-        //         @"SYSUTCDATETIME()", false, typeof(DateTimeOffset), null));
-        #endregion
+        _seed(modelBuilder);
+
+        modelBuilder.HasDbFunction(() => UtcNow())
+            .HasTranslation(_ => new SqlFunctionExpression(
+                @"SYSUTCDATETIME()", false, typeof(DateTimeOffset), null));
     }
 }

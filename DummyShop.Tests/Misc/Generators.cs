@@ -8,8 +8,6 @@ namespace DummyShop.Tests.Misc;
 
 public static class Generators
 {
-    #region Some examples
-
     public static int RelativelySmallNumber(this Generator<byte> generator) =>
         generator.First(number => number < 10);
 
@@ -40,8 +38,6 @@ public static class Generators
                     .Digits()
                     .Take(numberOfDigits - 1))));
     }
-
-    #endregion
     
     public static string LuhnCompliant(this IFixture fixture, int length = 10)
     {

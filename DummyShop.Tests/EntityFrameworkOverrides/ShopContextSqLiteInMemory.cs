@@ -13,9 +13,7 @@ public abstract class ShopContextSqLiteInMemory : LoggingTest, IAsyncLifetime
     {
         var connection = new SqliteConnection("DataSource=:memory:");
         connection.Open();
-        #region Hidden so far
-        // connection.CreateFunction(@"SYSUTCDATETIME", () => DateTimeOffset.UtcNow);
-        #endregion
+        connection.CreateFunction(@"SYSUTCDATETIME", () => DateTimeOffset.UtcNow);
 
         _contextOptions = new DbContextOptionsBuilder<ShopContext>()
             .UseSqlite(connection)
@@ -28,9 +26,6 @@ public abstract class ShopContextSqLiteInMemory : LoggingTest, IAsyncLifetime
     {
         await using var context = CreateContext();
         await context.Database.EnsureCreatedAsync();
-        context.Customers.RemoveRange(await context.Customers.ToArrayAsync());
-        context.Products.RemoveRange(await context.Products.ToArrayAsync());
-        await context.SaveChangesAsync();
     }
 
     public Task DisposeAsync() => Task.CompletedTask;

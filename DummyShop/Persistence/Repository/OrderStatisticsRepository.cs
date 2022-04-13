@@ -1,17 +1,18 @@
 ﻿using DummyShop.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace DummyShop.Persistence.Repository;
 
-public sealed class OrderStatisticsRepository
+public sealed class OrderStatisticsRepository : IHasUserOrderStatistics
 {
     private readonly ShopContext _context;
 
     public OrderStatisticsRepository(ShopContext context) => _context = context;
 
-    public Task<decimal> GetSumOfOrdersInRelatedPeriod(Email user) =>
+    public Task<decimal> GetSumOfOrdersInRelatedPeriod(Email user, DateTimeOffset threshold) =>
     (
         from customer in _context.Customers
             
@@ -25,9 +26,7 @@ public sealed class OrderStatisticsRepository
             on orderLine.ProductID equals product.ID
                 
         where customer.Email == user
-            #region A bit more complicated stuff
-            // && order.CreatedAt >= DateTimeOffset.Now.AddYears(-3)
-            #endregion
+            && order.CreatedAt >= threshold
                   
         select orderLine.Quantity * product.Price
     ).SumAsync();

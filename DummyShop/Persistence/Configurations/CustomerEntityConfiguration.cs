@@ -14,7 +14,7 @@ public sealed class CustomerEntityConfiguration : IEntityTypeConfiguration<Custo
         builder.Property(x => x.ID)
             .HasColumnName("customer_id")
             .HasColumnType("bigint")
-            .ValueGeneratedNever();;
+            .ValueGeneratedNever();
 
         builder.Property(x => x.Email)
             .HasColumnName("email")

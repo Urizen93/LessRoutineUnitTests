@@ -20,15 +20,13 @@ public sealed class CustomerRepository
         select customer
     ).FirstOrDefaultAsync();
 
-    #region List
-    
-    public Task<IEnumerable<CustomerEntity>> List() =>
+    public Task<IEnumerable<Customer>> List() =>
     (
         from customer in _context.Customers
-        select customer
+        select new Customer(
+            new CustomerID(customer.ID.ToString()),
+            new Email(customer.Email!))
     )
     .ToArrayAsync()
-    .Map(Enumerable.AsEnumerable);
-    
-    #endregion
+    .Select(Enumerable.AsEnumerable);
 }

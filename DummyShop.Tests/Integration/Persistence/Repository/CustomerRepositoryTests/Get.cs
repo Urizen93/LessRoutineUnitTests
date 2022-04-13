@@ -4,6 +4,7 @@ using DummyShop.Persistence;
 using DummyShop.Persistence.Repository;
 using DummyShop.Tests.Attributes;
 using DummyShop.Tests.EntityFrameworkOverrides;
+using SemanticComparison.Fluent;
 
 namespace DummyShop.Tests.Integration.Persistence.Repository.CustomerRepositoryTests;
 
@@ -12,7 +13,9 @@ public sealed class Get : ShopContextSqLiteInMemory
     public Get(ITestOutputHelper output) : base(output) { }
     
     [Theory, CustomerEntity]
-    public async Task Returns_Customer([Frozen] Email user, CustomerEntity expected)
+    public async Task Returns_Customer(
+        [Frozen] Email user,
+        CustomerEntity expected)
     {
         await Arrange(expected);
 
@@ -20,9 +23,9 @@ public sealed class Get : ShopContextSqLiteInMemory
         var sut = new CustomerRepository(context);
         var actual = await sut.Get(user);
 
-        Assert.NotNull(actual);
-        Assert.Equal(expected.ID, actual.ID);
-        Assert.Equal(expected.Email, actual.Email);
+        expected.AsSource().OfLikeness<CustomerEntity>()
+            .Without(entity => entity.Orders)
+            .ShouldEqual(actual!);
     }
 
     [Theory, CustomerEntity]
